@@ -62,7 +62,19 @@ export async function getStaticProps() {
     {
       headers: { ...fetchHeaders }
     }).then(response => response.json()
-  ).then(data => data.albums)
+     ).then(data => data.albums)
+  const track_id_to_name = albums.reduce((track_map: {[key: string]: string}, album: Album) => {
+    let tracks = album.tracks.items.reduce((tracks: {[key: string]: string}, track: {[key: string]: any}) => {
+      return {
+        ...tracks,
+        [track.id]: track.name
+      }
+    }, {})
+    return {
+      ...track_map,
+      ...tracks
+    }
+  }, {})
   // FETCH TRACK FEATURES
     // https://developer.spotify.com/console/get-audio-features-several-tracks/
     // https://developer.spotify.com/documentation/web-api/reference/#/operations/get-several-audio-features
@@ -74,10 +86,12 @@ export async function getStaticProps() {
       }
     ).then(response => response.json()
     ).then((data) => {
-      return data.audio_features
+      let features = data.audio_features
+      return features.map((track: {[key: string]: any}) => ({ ...track, key: track_id_to_name[track.id] }))
     })
   const audioFeatures = await Promise.all(albums.map((album: Album) => fetcher(album.tracks.items.map((track: Track) => track.id).join(',')))
   )
+
 
   return {
     props: {
@@ -93,7 +107,7 @@ export default function Home({ albums, features, token }) {
   const [selectedAlbum, setSelectedAlbum] = useState<any>(albums[0])
   const [selectedTrack, setSelectedTrack] = useState<any>(albums[0].tracks.items[0])
   const [selectedFeatures, setSelectedFeatures] = useState<any>(features[0])
-
+  console.log(selectedFeatures)
   const albumCovers = albums.map((album, index) =>
     <AlbumCover
       album={album}
@@ -102,11 +116,10 @@ export default function Home({ albums, features, token }) {
       setSelectedTrack={setSelectedTrack}
       audioFeatures={features[index]}
       setSelectedFeatures={setSelectedFeatures}
+      numAlbums={albums.length}
     />
   )
-  const featuresData = Object.assign(...Object.keys(selectedFeatures[0]).map( key =>
-    ({ [key]: selectedFeatures.map( o => o[key] ) })
-  ))
+
   const featuresCharts = <TrackFeatures featuresData={selectedFeatures} selectedAlbum={selectedAlbum} selectedTrack={selectedTrack} setSelectedTrack={setSelectedTrack} />
 
   const trackList = (
@@ -139,11 +152,9 @@ export default function Home({ albums, features, token }) {
         bottom: 0,
       }}
     >
-      <div style={{display: 'flex', justifyContent:'center', alignItems:'center', height: '100vh', margin: '30px'}}>
-      <Space direction="vertical" >
+      <Space direction="vertical" style={{ height: '100vh', justifyContent: 'space-evenly', marginLeft: '30px',  marginRight: '30px' }} >
         {albumCovers}
       </Space>
-      </div>
     </Sider>
     <Layout className="site-layout" style={{ height: '100vh', marginLeft: 200 }}>
       <Row align='middle' wrap={false}>

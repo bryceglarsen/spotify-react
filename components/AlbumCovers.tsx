@@ -1,7 +1,15 @@
 import { Image } from 'antd';
 import { spotifyStyle } from 'styles'
 
-export const AlbumCover = ({ album, selectedAlbum, setSelectedAlbum, setSelectedTrack, audioFeatures, setSelectedFeatures }) => {
+export const AlbumCover = ({ 
+    album,
+    selectedAlbum,
+    setSelectedAlbum,
+    setSelectedTrack,
+    audioFeatures,
+    setSelectedFeatures,
+    numAlbums
+  }) => {
   let selected = album.id === selectedAlbum.id
   let albumCover = album.images[1]
   let firstTrack = album.tracks.items[0]
@@ -23,11 +31,9 @@ export const AlbumCover = ({ album, selectedAlbum, setSelectedAlbum, setSelected
   }
 
   return (
-    <div key={album.name} style={{ height: '20vh' }}>
+    <div key={album.name} >
       <Image
         src={albumCover.url}
-        height={125}
-        width={125}
         preview={false}
         style={{ cursor: 'pointer', ...albumStyle }}
         onClick={() => handleClick()}

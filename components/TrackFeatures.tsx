@@ -37,7 +37,7 @@ export const TrackFeatures = ({ featuresData, selectedAlbum, selectedTrack, setS
     );
     return [...res, newObj]
   }, [])
-  console.log(updatedData)
+  console.log('updated', updatedData)
   let rowCharts = []
   for (const [rowIndex, features] of Object.entries(layout)) {
     let featureCharts = features.map((feature) => {
