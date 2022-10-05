@@ -18,6 +18,7 @@ import type { MenuProps } from 'antd';
 import { spotifyStyle } from 'styles'
 import { AlbumCover, TrackFeatures } from 'components'
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { Album, AudioFeatures, Track } from "types/spotify-api";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -51,6 +52,7 @@ export async function getStaticProps() {
     '6BN0KczNzSrfmKoQzd6lMS',
     '2CB0fsRN3Ox0YFCLsfkHaa',
     '21KIagsx1ZvYcv0sVkEAWv',
+    '0SD7kwnJEC2oDzQBKEHQnH',
     '4K9AT9Lu48MOMK3YK4GOR6',
   ]
   // FETCH ALBUM DETAILS
@@ -74,7 +76,7 @@ export async function getStaticProps() {
     ).then((data) => {
       return data.audio_features
     })
-  const audioFeatures = await Promise.all(albums.map((album) => fetcher(album.tracks.items.map((track) => track.id).join(',')))
+  const audioFeatures = await Promise.all(albums.map((album: Album) => fetcher(album.tracks.items.map((track: Track) => track.id).join(',')))
   )
 
   return {
@@ -111,7 +113,7 @@ export default function Home({ albums, features, token }) {
     <div>
       <ul style={{ listStyle: "none" }}>
       {selectedAlbum.tracks.items.map(track =>
-        <li key={track.id} onClick={() => {console.log(track.name, track); setSelectedTrack(track)}}>
+        <li key={track.id} onClick={() => {setSelectedTrack(track)}}>
             <a>{track.track_number}. {track.name}</a>
         </li>)
       }
@@ -137,7 +139,7 @@ export default function Home({ albums, features, token }) {
         bottom: 0,
       }}
     >
-      <div style={{display: 'flex', justifyContent:'center', alignItems:'center', height: '100vh'}}>
+      <div style={{display: 'flex', justifyContent:'center', alignItems:'center', height: '100vh', margin: '30px'}}>
       <Space direction="vertical" >
         {albumCovers}
       </Space>

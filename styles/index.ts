@@ -36,5 +36,8 @@ export const spotifyStyle = {
     borderStyle: 'solid',
     borderColor: '#1DB954',
     borderWidth: 3
+  },
+  accent: {
+    color: '#b3b3b3' //'#1ED760'
   }
 }
